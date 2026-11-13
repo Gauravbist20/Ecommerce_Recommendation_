@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | SmartShop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="logo">SmartShop.</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/cart">Cart ({{ cart_count }})</a>
+        {% if current_user %}
+            <span>Hi, {{ current_user }}</span>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+        {% endif %}
+    </div>
+</nav>
+
+<section class="cart-section">
+    <h1>Your Shopping Cart</h1>
+
+    {% if cart_products %}
+        <form action="/update-cart" method="POST">
+
+            {% for item in cart_products %}
+                {% set product = item.product %}
+
+                <div class="cart-item">
+                    <img src="{{ product_images.get(product[0], '') }}"
+                         alt="{{ product[1] }}">
+
+                    <div class="cart-details">
+                        <h3>{{ product[1] }}</h3>
+                        <p>{{ product[2] }}</p>
+                        <strong>₹{{ product[3] }}</strong>
+                    </div>
+
+                    <div class="quantity">
+                        <label>Quantity</label>
+                        <input type="number"
+                               name="{{ product[0] }}"
+                               value="{{ item.quantity }}"
+                               min="0"
+                               max="99">
+                    </div>
+
+                    <a href="/remove-from-cart/{{ product[0] }}"
+                       class="remove-button">Remove</a>
+                </div>
+            {% endfor %}
+
+            <div class="cart-total">
+                <h2>Total: ₹{{ total }}</h2>
+                <button type="submit">Update Cart</button>
+            </div>
+        </form>
+
+    {% else %}
+        <div class="empty-cart">
+            <h2>Your cart is empty</h2>
+            <p>Discover products and add your favourites.</p>
+            <a href="/" class="primary-button">Explore Products</a>
+        </div>
+    {% endif %}
+</section>
+
+<footer>
+    <p>SmartShop — Intelligent Product Recommendation System</p>
+</footer>
+
+</body>
+</html>
